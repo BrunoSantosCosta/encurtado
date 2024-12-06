@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Factories\UrlFactory;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Url;
@@ -81,14 +82,10 @@ class UrlControllerTest extends TestCase
     public function test_redirect_url()
     {
         // Cria uma URL encurtada com uma data de expiração no futuro
-        $url = Url::create([
-            'original_url' => 'https://www.example.com',
-            'short_url' => 'short123',
-            'expires_at' => now()->addMinute(),
-        ]);
+        $url = UrlFactory::create('https://www.example.com');
 
         // Realiza a requisição GET para o redirecionamento
-        $response = $this->get('/short123');
+        $response = $this->get($url->short_url);
 
         // Verifica se o redirecionamento foi feito para a URL original
         $response->assertRedirect('https://www.example.com');
@@ -102,11 +99,7 @@ class UrlControllerTest extends TestCase
     public function test_redirect_url_expired()
     {
         // Cria uma URL encurtada com uma data de expiração no passado
-        $url = Url::create([
-            'original_url' => 'https://www.example.com',
-            'short_url' => 'expired123',
-            'expires_at' => now()->subMinute(),
-        ]);
+        $url = UrlFactory::create('https://www.example.com');
 
         // Realiza a requisição GET para o redirecionamento
         $response = $this->get('/expired123');

@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Factories\UrlFactory;
+use App\Repositories\UrlRepository;
 use Illuminate\Http\Request;
 use App\Models\Url;
 use Carbon\Carbon;
@@ -9,18 +11,11 @@ class UrlController extends Controller
 {
     public function shorten(Request $request)
     {
-
-        $request->validate([
-            'url' => 'required|url'
+        $validated = $request->validate([
+            'url' => 'required|url',
         ]);
 
-        $shortUrl = substr(bin2hex(random_bytes(5)), 0, 10);
-
-        $url = Url::create([
-            'original_url' => $request->url,
-            'short_url' => $shortUrl,
-            'expires_at' => Carbon::now()->addMinute()
-        ]);
+        $url = UrlFactory::create($validated['url']);
 
         return response()->json([
             'original' => $url->original_url,
