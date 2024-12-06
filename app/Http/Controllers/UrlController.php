@@ -19,7 +19,7 @@ class UrlController extends Controller
         $url = Url::create([
             'original_url' => $request->url,
             'short_url' => $shortUrl,
-            'expires_at' => Carbon::now()->addDays(7)
+            'expires_at' => Carbon::now()->addMinute()
         ]);
 
         return response()->json([
